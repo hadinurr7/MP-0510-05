@@ -9,15 +9,214 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-model Sample {
+model User {
+  id             Int      @id @default(autoincrement())
+  email          String   @unique
+  fullname       String
+  profilePicture String
+  address        String
+  phoneNumber    Int
+  role           Role     @default(USER)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  isDeleted      Boolean  @default(false)
+
+  transaction   Transaction[]
+  voucher       Voucher[]
+  coupon        Coupon[]
+  point         Point[]
+  reviews       Reviews[]
+  notifications Notifications[]
+
+  @@map("user")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Event {
+  id          Int           @id @default(autoincrement())
+  name        String
+  image       String
+  description String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  isDeleted   Boolean       @default(false)
+  categoryId  Int
+  categories  Categories    @relation(fields: [categoryId], references: [id])
+  Schedules   Schedules[]
+  transaction Transaction[]
+  voucher     Voucher[]
+
+  @@map("events")
+}
+
+model Categories {
   id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  event     Event[]
 
-  @@map("samples")
+  @@map("categories")
+}
+
+model Schedules {
+  id        Int      @id @default(autoincrement())
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  eventId   Int
+  event     Event    @relation(fields: [eventId], references: [id])
+  citiesId  Int
+  cities    Cities   @relation(fields: [citiesId], references: [id])
+
+  @@map("schedules")
+}
+
+model Cities {
+  id        Int         @id @default(autoincrement())
+  name      String
+  schedules Schedules[]
+
+  @@map("cities")
+}
+
+model Seats {
+  id             Int      @id @default(autoincrement())
+  seat           Seat?
+  availableSeats Int
+  createdAt      DateTime @default(now())
+  updateAt       DateTime @updatedAt
+
+  @@map("seats")
+}
+
+enum Seat {
+  REGULER
+  VIP
+}
+
+model Transaction {
+  id         Int               @id @default(autoincrement())
+  userId     Int
+  user       User              @relation(fields: [userId], references: [id])
+  eventId    Int
+  event      Event             @relation(fields: [eventId], references: [id])
+  voucherId  Int?
+  voucher    Voucher?          @relation(fields: [voucherId], references: [id])
+  couponId   Int?
+  coupon     Coupon?           @relation(fields: [couponId], references: [id])
+  pointId    Int
+  point      Point             @relation(fields: [pointId], references: [id])
+  totalPrice Int
+  status     TransactionStatus
+  createdAt  DateTime          @default(now())
+  updateAt   DateTime          @updatedAt
+
+  payments Payments[]
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELED
+  REFUNDED
+}
+
+model Payments {
+  id            Int           @id @default(autoincrement())
+  transactionId Int
+  transaction   Transaction   @relation(fields: [transactionId], references: [id])
+  paymentMethod String
+  paymentStatus PaymentStatus
+  amount        Int
+  paymentProof  String
+  createdAt     DateTime      @default(now())
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELED
+  REFUNDED
+}
+
+model Voucher {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+  eventId     Int
+  event       Event         @relation(fields: [eventId], references: [id])
+  isUsed      Boolean       @default(false)
+  value       Int
+  validFrom   DateTime
+  validUntil  DateTime
+  createdAt   DateTime      @default(now())
+  transaction Transaction[]
+
+  @@map("vouchers")
+}
+
+model Coupon {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  code       String
+  isUsed     Boolean  @default(false)
+  value      Int
+  validFrom  DateTime
+  validUntil DateTime
+  createdAt  DateTime @default(now())
+
+  transaction Transaction[]
+}
+
+model Point {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  pointEarned Int
+  pointUsed   Int
+  expiredDate DateTime
+  createdAt   DateTime @default(now())
+
+  transaction Transaction[]
+}
+
+model Reviews {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Notifications {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  message   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+enum NotificationType {
+  TRANSACTION
+  PROMOTION
+  INFORMATION
 }
