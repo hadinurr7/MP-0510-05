@@ -123,6 +123,8 @@ model Transaction {
   updateAt   DateTime          @updatedAt
 
   payments Payments[]
+
+  @@map("transactions")
 }
 
 enum TransactionStatus {
