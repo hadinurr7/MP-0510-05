@@ -182,6 +182,8 @@ model Coupon {
   createdAt  DateTime @default(now())
 
   transaction Transaction[]
+
+  @@map("coupons")
 }
 
 model Point {
@@ -194,6 +196,8 @@ model Point {
   createdAt   DateTime @default(now())
 
   transaction Transaction[]
+
+  @@map("points")
 }
 
 model Reviews {
@@ -202,6 +206,8 @@ model Reviews {
   user      User     @relation(fields: [userId], references: [id])
   message   String
   createdAt DateTime @default(now())
+
+  @@map("reviews")
 }
 
 model Notifications {
@@ -213,6 +219,8 @@ model Notifications {
   isRead    Boolean          @default(false)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
+
+  @@map("notifications")
 }
 
 enum NotificationType {
