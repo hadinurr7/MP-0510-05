@@ -10,7 +10,7 @@ interface getCategoriesQuery extends PaginationQueryParams {
 export const getCategoriesService = async (query: getCategoriesQuery) => {
     try {
         const { page, sortBy, sortOrder, take, search } = query;
-        const whereClause: Prisma.CategoriesWhereInput = {};
+        const whereClause: Prisma.CategoryWhereInput = {};
 
         if (search) {
             whereClause.OR = [
@@ -18,7 +18,7 @@ export const getCategoriesService = async (query: getCategoriesQuery) => {
             ];
         }
 
-        const categories = await prisma.categories.findMany({
+        const category = await prisma.category.findMany({
             where: whereClause,
             skip: (page - 1) * take,
             take: take,
@@ -35,10 +35,10 @@ export const getCategoriesService = async (query: getCategoriesQuery) => {
             }
         });
 
-        const count = await prisma.categories.count({ where: whereClause });
+        const count = await prisma.category.count({ where: whereClause });
 
         return {
-            data: categories,
+            data: category,
             meta: { page, take, total: count }
         };
     } catch (error) {

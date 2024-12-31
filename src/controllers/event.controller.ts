@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { getEventsService } from "../services/events/get-events.service";
+import { createEventService } from "../services/events/create-events.service";
 
 export const getEventsController = async (
     req: Request,
@@ -23,4 +24,22 @@ export const getEventsController = async (
     }
   };
 
- 
+  export const createEventController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+  
+      console.log(files);
+        
+      const result = await createEventService(
+        req.body,
+        files.thumbnail?.[0],
+      );
+      res.status(200).send(result);
+    } catch (error) {
+      next(error);
+    }
+  };

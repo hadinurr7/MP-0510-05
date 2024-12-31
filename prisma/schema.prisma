@@ -40,29 +40,30 @@ enum Role {
 }
 
 model Event {
-  id          Int           @id @default(autoincrement())
-  name        String
-  image       String
-  description String        @db.Text
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  isDeleted   Boolean       @default(false)
-  startDate   DateTime
-  endDate     DateTime
-  price       Int
-  categoryId  Int
-  categories  Categories    @relation(fields: [categoryId], references: [id])
-  transaction Transaction[]
-  voucher     Voucher[]
-  User        User          @relation(fields: [userId], references: [id])
-  userId      Int
-  Cities      Cities        @relation(fields: [cityId], references: [id])
-  cityId      Int
+  id             Int           @id @default(autoincrement())
+  name           String
+  thumbnail      String
+  description    String        @db.Text
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  isDeleted      Boolean       @default(false)
+  startDate      DateTime
+  endDate        DateTime
+  price          Int
+  availableSeats Int
+  transaction    Transaction[]
+  voucher        Voucher[]
+  User           User          @relation(fields: [userId], references: [id])
+  userId         Int
+  Cities         Cities        @relation(fields: [cityId], references: [id])
+  cityId         Int
+  Category       Category?     @relation(fields: [categoryId], references: [id])
+  categoryId     Int?
 
   @@map("events")
 }
 
-model Categories {
+model Category {
   id     Int     @id @default(autoincrement())
   name   String
   events Event[]
@@ -76,21 +77,6 @@ model Cities {
   events Event[]
 
   @@map("cities")
-}
-
-model Seats {
-  id             Int      @id @default(autoincrement())
-  seat           Seat?
-  availableSeats Int
-  createdAt      DateTime @default(now())
-  updateAt       DateTime @updatedAt
-
-  @@map("seats")
-}
-
-enum Seat {
-  REGULER
-  VIP
 }
 
 model Transaction {

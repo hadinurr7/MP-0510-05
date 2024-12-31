@@ -3,11 +3,11 @@ import { Prisma } from "@prisma/client";
 import { PaginationQueryParams } from "../../types/pagination";
 import { prisma } from "../../lib/prisma";
 
-interface getCitiesQuery extends PaginationQueryParams {
+interface getCityQuery extends PaginationQueryParams {
     search?: string
 }
 
-export const getCitiesService = async (query: getCitiesQuery) => {
+export const getCitiesService = async (query: getCityQuery) => {
     try {
         const { page, sortBy, sortOrder, take, search } = query;
         const whereClause: Prisma.CitiesWhereInput = {};
