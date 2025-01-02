@@ -1,10 +1,10 @@
 import { Router } from "express";
-
-import { validateRegister } from "../vaidator/auth.validator";
-import { registerController } from "../controllers/auth.controller";
+import { validateLogin, validateRegister } from "../vaidator/auth.validator";
+import { loginController, registerController } from "../controllers/auth.controller";
 
 const router = Router();
 
 router.post("/register", validateRegister, registerController);
+router.post("/login", validateLogin, loginController);
 
-export default router
+export default router;
