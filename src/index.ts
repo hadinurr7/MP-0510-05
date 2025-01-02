@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import { PORT } from "./config";
 import cors from "cors";
 import eventRouter from "./routes/event.router";
@@ -21,5 +21,5 @@ app.use(
 );
 
 app.listen(PORT, () => {
-  console.log(`server running on PORT ${PORT}`);
+  console.log(`Server running on PORT: ${PORT}`);
 });

@@ -10,4 +10,3 @@ export const comparePassword = async (
 ) => {
   return await verify(hashedPassword, candidatePassword);
 };
-

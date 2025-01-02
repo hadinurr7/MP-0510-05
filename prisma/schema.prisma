@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,28 +18,88 @@ model User {
   email          String   @unique
   fullname       String
   password       String
-  profilePicture String
-  address        String
-  phoneNumber    Int
+  phoneNumber    String?
+  profilePicture String?
+  address        String?
   role           Role     @default(USER)
+  referralCode   String?  @unique
+  totalPoints    Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   isDeleted      Boolean  @default(false)
 
-  transaction   Transaction[]
-  voucher       Voucher[]
-  coupon        Coupon[]
-  point         Point[]
-  reviews       Reviews[]
-  notifications Notifications[]
-  event         Event[]
+  transaction    Transaction[]
+  voucher        Voucher[]
+  coupon         Coupon[]
+  point          Point[]
+  reviews        Reviews[]
+  notifications  Notifications[]
+  event          Event[]
 
   @@map("users")
 }
 
 enum Role {
-  ADMIN
+  ORGANIZER
   USER
+}
+
+model Referral {
+  id           Int      @id @default(autoincrement())
+  referrerId   Int
+  referredById Int
+  referrer     User     @relation("UserReferrer", fields: [referrerId], references: [id])
+  referredBy   User     @relation("UserRefferedBy", fields: [referredById], references: [id])
+  createdAt    DateTime @default(now())
+
+  @@map("referrals")
+}
+
+model Voucher {
+  id          Int           @id @default(autoincrement())
+  voucherCode String        @unique
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+  eventId     Int
+  event       Event         @relation(fields: [eventId], references: [id])
+  isUsed      Boolean       @default(false)
+  value       Int
+  validFrom   DateTime
+  validUntil  DateTime
+  createdAt   DateTime      @default(now())
+  transaction Transaction[]
+
+  @@map("vouchers")
+}
+
+model Coupon {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  code       String   @unique
+  isUsed     Boolean  @default(false)
+  value      Int
+  validFrom  DateTime
+  validUntil DateTime
+  createdAt  DateTime @default(now())
+
+  transaction Transaction[]
+
+  @@map("coupons")
+}
+
+model Point {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  pointEarned Int
+  validFrom   DateTime
+  validUntil  DateTime
+  createdAt   DateTime @default(now())
+
+  transaction Transaction[]
+
+  @@map("points")
 }
 
 model Event {
@@ -95,9 +158,9 @@ model Transaction {
   qty        Int
   status     TransactionStatus
   createdAt  DateTime          @default(now())
-  updateAt   DateTime          @updatedAt
+  updatedAt  DateTime          @updatedAt
 
-  payments Payments[]
+  payment Payment[]
 
   @@map("transactions")
 }
@@ -110,7 +173,7 @@ enum TransactionStatus {
   REFUNDED
 }
 
-model Payments {
+model Payment {
   id            Int           @id @default(autoincrement())
   transactionId Int
   transaction   Transaction   @relation(fields: [transactionId], references: [id])
@@ -131,53 +194,7 @@ enum PaymentStatus {
   REFUNDED
 }
 
-model Voucher {
-  id          Int           @id @default(autoincrement())
-  userId      Int
-  user        User          @relation(fields: [userId], references: [id])
-  eventId     Int
-  event       Event?        @relation(fields: [eventId], references: [id])
-  isUsed      Boolean       @default(false)
-  value       Int
-  validFrom   DateTime
-  validUntil  DateTime
-  createdAt   DateTime      @default(now())
-  transaction Transaction[]
-
-  @@map("vouchers")
-}
-
-model Coupon {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id])
-  code       String
-  isUsed     Boolean  @default(false)
-  value      Int
-  validFrom  DateTime
-  validUntil DateTime
-  createdAt  DateTime @default(now())
-
-  transaction Transaction[]
-
-  @@map("coupons")
-}
-
-model Point {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id])
-  pointEarned Int
-  pointUsed   Int
-  expiredDate DateTime
-  createdAt   DateTime @default(now())
-
-  transaction Transaction[]
-
-  @@map("points")
-}
-
-model Reviews {
+model Review {
   id        Int      @id @default(autoincrement())
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
@@ -187,7 +204,7 @@ model Reviews {
   @@map("reviews")
 }
 
-model Notifications {
+model Notification {
   id        Int              @id @default(autoincrement())
   userId    Int
   user      User             @relation(fields: [userId], references: [id])
