@@ -20,46 +20,46 @@ export const validateRegister = [
 ];
 
 export const validateLogin = [
-    body("email").notEmpty().withMessage("Email is required").isEmail(),
-    body("password").notEmpty().withMessage("Password is required"),
-  
-    (req: Request, res: Response, next: NextFunction) => {
-      const errors = validationResult(req);
-  
-      if (!errors.isEmpty()) {
-        res.status(400).send({ message: errors.array()[0].msg });
-        return;
-      }
-  
-      next();
-    },
-  ];
+  body("email").notEmpty().withMessage("Email is required").isEmail(),
+  body("password").notEmpty().withMessage("Password is required"),
 
-  export const validateForgotPassword = [
-    body("email").notEmpty().withMessage("Email is required").isEmail(),  
-    (req: Request, res: Response, next: NextFunction) => {
-      const errors = validationResult(req);
-  
-      if (!errors.isEmpty()) {
-        res.status(400).send({ message: errors.array()[0].msg });
-        return;
-      }
-  
-      next();
-    },
-  ];
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
 
-  export const validateResetPassword = [
-    body("password").notEmpty().withMessage("Password is required"),
-  
-    (req: Request, res: Response, next: NextFunction) => {
-      const errors = validationResult(req);
-  
-      if (!errors.isEmpty()) {
-        res.status(400).send({ message: errors.array()[0].msg });
-        return;
-      }
-  
-      next();
-    },
-  ];
+    if (!errors.isEmpty()) {
+      res.status(400).send({ message: errors.array()[0].msg });
+      return;
+    }
+
+    next();
+  },
+];
+
+export const validateForgotPassword = [
+  body("email").notEmpty().withMessage("Email is required").isEmail(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).send({ message: errors.array()[0].msg });
+      return;
+    }
+
+    next();
+  },
+];
+
+export const validateResetPassword = [
+  body("password").notEmpty().withMessage("Password is required"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).send({ message: errors.array()[0].msg });
+      return;
+    }
+
+    next();
+  },
+];
