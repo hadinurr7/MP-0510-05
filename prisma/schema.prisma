@@ -9,7 +9,6 @@ generator client {
 }
 
 datasource db {
-
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL") //hapus kalau pakai docker
@@ -30,14 +29,15 @@ model User {
   updatedAt      DateTime @updatedAt
   isDeleted      Boolean  @default(false)
 
-  transaction   Transaction[]
-  voucher       Voucher[]
-  coupon        Coupon[]
-  point         Point[]
-  reviews       Reviews[]
-  notifications Notifications[]
-  event         Event[]
-
+  referrer Referral[] @relation("UserReferrer")
+  referredBy Referral[] @relation("UserRefferedBy")
+  transaction  Transaction[]
+  voucher      Voucher[]
+  coupon       Coupon[]
+  point        Point[]
+  event        Event[]
+  notification Notification[]
+  review       Review[]
 
   @@map("users")
 }
@@ -126,7 +126,6 @@ model Event {
   Category       Category?     @relation(fields: [categoryId], references: [id])
   categoryId     Int?
 
-
   @@map("events")
 }
 
@@ -134,7 +133,6 @@ model Category {
   id     Int     @id @default(autoincrement())
   name   String
   events Event[]
-
 
   @@map("categories")
 }
@@ -144,10 +142,8 @@ model Cities {
   name   String
   events Event[]
 
-
   @@map("cities")
 }
-
 
 model Transaction {
   id         Int               @id @default(autoincrement())
@@ -200,53 +196,6 @@ enum PaymentStatus {
   CANCELED
   REFUNDED
 }
-
-model Voucher {
-  id          Int           @id @default(autoincrement())
-  userId      Int
-  user        User          @relation(fields: [userId], references: [id])
-  eventId     Int
-  event       Event?        @relation(fields: [eventId], references: [id])
-  isUsed      Boolean       @default(false)
-  value       Int
-  validFrom   DateTime
-  validUntil  DateTime
-  createdAt   DateTime      @default(now())
-  transaction Transaction[]
-
-  @@map("vouchers")
-}
-
-model Coupon {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id])
-  code       String
-  isUsed     Boolean  @default(false)
-  value      Int
-  validFrom  DateTime
-  validUntil DateTime
-  createdAt  DateTime @default(now())
-
-  transaction Transaction[]
-
-  @@map("coupons")
-}
-
-model Point {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id])
-  pointEarned Int
-  pointUsed   Int
-  expiredDate DateTime
-  createdAt   DateTime @default(now())
-
-  transaction Transaction[]
-
-  @@map("points")
-}
-
 
 model Review {
   id        Int      @id @default(autoincrement())
