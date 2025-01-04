@@ -26,32 +26,32 @@ export const getEventsStatisticsService = async ({
 
     if (year) {
       filters.createdAt = {
-        gte: new Date(`${year}-01-01`), // Mulai dari awal tahun
-        lt: new Date(`${Number(year) + 1}-01-01`), // Sampai awal tahun berikutnya
+        gte: new Date(`${year}-01-01`),
+        lt: new Date(`${Number(year) + 1}-01-01`),
       };
     }
 
     if (month) {
       filters.createdAt = {
-        gte: new Date(`${year}-${month}-01`), // Mulai dari awal bulan
+        gte: new Date(`${year}-${month}-01`),
         lt:
           month === "12"
             ? new Date(`${Number(year) + 1}-01-01`)
-            : new Date(`${year}-${Number(month) + 1}-01`), // Sampai awal bulan berikutnya
+            : new Date(`${year}-${Number(month) + 1}-01`), 
       };
     }
 
     if (day) {
       filters.createdAt = {
-        gte: new Date(`${year}-${month}-${day}`), // Tanggal tertentu
-        lt: new Date(`${year}-${month}-${Number(day) + 1}`), // Hari berikutnya
+        gte: new Date(`${year}-${month}-${day}`),
+        lt: new Date(`${year}-${month}-${Number(day) + 1}`),
       };
     }
 
     const statistics = await prisma.transaction.groupBy({
       by: ["eventId"],
       _count: { id: true },
-      _sum: { totalPrice: true, qty: true }, // Tambahkan agregasi untuk total pendapatan dan tiket
+      _sum: { totalPrice: true, qty: true },
       where: filters,
     });
 
@@ -61,13 +61,12 @@ export const getEventsStatisticsService = async ({
       select: { id: true, name: true, startDate: true },
     });
 
-    // Format hasil untuk lebih informatif
     const formattedStatistics = statistics.map((stat) => {
       const event = events.find((e) => e.id === stat.eventId);
       return {
         eventId: stat.eventId,
-        title: event?.name || "Unknown Event", // Menyertakan title
-        startTime: event?.startDate || "Unknown Time", // Menyertakan startTime
+        title: event?.name || "Unknown Event",
+        startTime: event?.startDate || "Unknown Time", 
         totalTransactions: stat._count.id,
         totalRevenue: stat._sum.totalPrice || 0,
         totalTicketsSold: stat._sum.qty || 0,

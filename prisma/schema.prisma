@@ -29,8 +29,8 @@ model User {
   updatedAt      DateTime @updatedAt
   isDeleted      Boolean  @default(false)
 
-  referrer Referral[] @relation("UserReferrer")
-  referredBy Referral[] @relation("UserRefferedBy")
+  referrer     Referral[]     @relation("UserReferrer")
+  referredBy   Referral[]     @relation("UserRefferedBy")
   transaction  Transaction[]
   voucher      Voucher[]
   coupon       Coupon[]
@@ -121,7 +121,7 @@ model Event {
   voucher        Voucher[]
   User           User          @relation(fields: [userId], references: [id])
   userId         Int
-  Cities         Cities        @relation(fields: [cityId], references: [id])
+  city           City          @relation(fields: [cityId], references: [id])
   cityId         Int
   Category       Category?     @relation(fields: [categoryId], references: [id])
   categoryId     Int?
@@ -137,10 +137,10 @@ model Category {
   @@map("categories")
 }
 
-model Cities {
-  id     Int     @id @default(autoincrement())
-  name   String
-  events Event[]
+model City {
+  id    Int     @id @default(autoincrement())
+  name  String
+  Event Event[]
 
   @@map("cities")
 }
@@ -151,12 +151,16 @@ model Transaction {
   user       User              @relation(fields: [userId], references: [id])
   eventId    Int
   event      Event             @relation(fields: [eventId], references: [id])
+
   voucherId  Int?
   voucher    Voucher?          @relation(fields: [voucherId], references: [id])
+
   couponId   Int?
   coupon     Coupon?           @relation(fields: [couponId], references: [id])
+
   pointId    Int
   point      Point             @relation(fields: [pointId], references: [id])
+  
   totalPrice Int
   qty        Int
   status     TransactionStatus
