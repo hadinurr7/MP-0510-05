@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createEventController, getEventsController } from "../controllers/event.controller";
 import { uploader } from "../lib/multer";
-import { validateCreateEvent } from "../validator/create.validator";
+import { validateCreateEvent } from "../vaidator/create.validator";
 
 const router = Router();
 

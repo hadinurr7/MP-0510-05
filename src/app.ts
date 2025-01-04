@@ -4,6 +4,7 @@ import authRouter from "./routes/auth.router";
 import eventRouter from "./routes/event.router";
 import categoryRouter from "./routes/category.router";
 import cityRouter from "./routes/city.router";
+import userRouter from "./routes/user.router";
 
 const app = express();
 
@@ -11,6 +12,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRouter);
+app.use("/users", userRouter)
+
 
 app.use("/events", eventRouter);
 app.use("/categories", categoryRouter);
