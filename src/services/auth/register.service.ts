@@ -13,27 +13,24 @@ interface RegisterInput
 }
 
 export const registerService = async (body: RegisterInput) => {
-  const { fullname, email,phoneNumber, password, referralCode } = body;
-
   try {
+    const { fullname, email, password, phoneNumber, referralCode } = body;
+
     const existingUser = await prisma.user.findFirst({
       where: { email },
     });
-    
     if (existingUser) {
-      throw new Error("Email already exists!");
+      throw new Error("Email already exist!");
     }
-
-    const lowerCaseReferralCode = referralCode
+    const normalizedReferralCode = referralCode
       ? referralCode.toLowerCase()
       : null;
 
     let referrer = null;
-    if (lowerCaseReferralCode) {
-
+    if (normalizedReferralCode) {
       referrer = await prisma.user.findUnique({
         where: {
-          referralCode: lowerCaseReferralCode,
+          referralCode: normalizedReferralCode,
         },
       });
 
@@ -43,68 +40,51 @@ export const registerService = async (body: RegisterInput) => {
     }
 
     const hashedPassword = await hashPassword(password);
-
     const userReferralCode = generateReferralCode();
 
-    const result = await prisma.$transaction(async (tx) => {
+    const newUser = await prisma.user.create({
+      data: {
+        fullname,
+        phoneNumber,
+        email,
+        password: hashedPassword,
+        referralCode: userReferralCode,
+      },
+    });
+    if (referrer) {
+      await prisma.referral.create({
+        data: { referrerId: referrer.id, referredById: newUser.id },
+      });
 
-      const newUser = await tx.user.create({
+      const pointsExpiryDate = new Date();
+      pointsExpiryDate.setMonth(pointsExpiryDate.getMonth() + 3);
+
+      await prisma.point.create({
         data: {
-          fullname,
-          email,
-          password: hashedPassword,
-          phoneNumber,
-          referralCode: userReferralCode,
-          totalPoints: 0,
+          userId: referrer.id,
+          pointEarned: 10000,
+          validFrom: new Date(),
+          validUntil: pointsExpiryDate,
         },
       });
 
-      if (referrer) {
-        await tx.referral.create({
-          data: { referrerId: referrer.id, referredById: newUser.id },
-        });
+      const couponExpiryDate = new Date();
+      couponExpiryDate.setMonth(couponExpiryDate.getMonth() + 3);
+      const uniqueCouponCode = await generateUniqueCouponCode();
 
-        const pointsExpiryDate = new Date();
-        pointsExpiryDate.setMonth(pointsExpiryDate.getMonth() + 3);
-
-        await tx.point.create({
-          data: {
-            userId: referrer.id,
-            pointEarned: 10000,
-            validUntil:new Date(),
-            validFrom: pointsExpiryDate,
-          },
-        });
-
-        await tx.user.update({
-          where: { id: referrer.id },
-          data: {
-            totalPoints: { increment: 10000 },
-          },
-        });
-
-        const couponExpiryDate = new Date();
-        couponExpiryDate.setMonth(couponExpiryDate.getMonth() + 3); 
-        const uniqueCouponCode = await generateUniqueCouponCode();
-
-        await tx.coupon.create({
-          data: {
-            userId: newUser.id,
-            code: uniqueCouponCode,
-            value: 10000,
-            validFrom: new Date(),
-            validUntil: couponExpiryDate,
-          },
-        });
-      }
-
-      return newUser;
-    });
-
-    return result;
+      await prisma.coupon.create({
+        data: {
+          userId: newUser.id,
+          code: uniqueCouponCode,
+          value: 10000,
+          validFrom: new Date(),
+          validUntil: couponExpiryDate,
+        },
+      });
+    }
+    const { password: pw, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
   } catch (error) {
     throw error;
   }
 };
-
-export default registerService;
