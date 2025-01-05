@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get("/", getUsersController);
 
-router.get("/profile", getUserController);
+router.get("/profile",verifyToken, getUserController);
 
 router.patch(
   "/profile",
@@ -22,7 +22,8 @@ router.patch(
   uploader(5).single("profilePicture"),
   fileFilter,
   validateUpdateUser,
-  updateUserController
+  updateUserController,
+  
 );
 
 router.patch(

@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma";
+import { prisma } from "../../lib/prisma";
 
 interface TransactionsPayload {
   eventName?: string;
@@ -8,7 +8,7 @@ interface TransactionsPayload {
 
 export const getTransactionsService = async (payload: TransactionsPayload) => {
   try {
-    // Default to page 1 and size 10 if not provided
+    
     const page = payload.page > 0 ? payload.page : 1;
     const size = payload.size > 0 ? payload.size : 10;
 
@@ -30,7 +30,7 @@ export const getTransactionsService = async (payload: TransactionsPayload) => {
       take: size,
       skip: (page - 1) * size,
     });
-
+    
     return transaction;
   } catch (error) {
     throw error;

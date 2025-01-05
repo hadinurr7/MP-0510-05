@@ -6,7 +6,7 @@ import categoryRouter from "./routes/category.router";
 import cityRouter from "./routes/city.router";
 import userRouter from "./routes/user.router";
 import transactionRouter from "./routes/transaction.router"
-
+import voucherRouter from "./routes/voucher.router";
 const app = express();
 
 app.use(cors());
@@ -15,6 +15,7 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/users", userRouter)
 app.use("/transactions",transactionRouter )
+app.use("/vouchers", voucherRouter)
 
 
 app.use("/events", eventRouter);

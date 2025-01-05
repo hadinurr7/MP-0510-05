@@ -66,6 +66,7 @@ model Voucher {
   eventId     Int
   event       Event         @relation(fields: [eventId], references: [id])
   isUsed      Boolean       @default(false)
+  qty         Int
   value       Int
   validFrom   DateTime
   validUntil  DateTime
@@ -123,7 +124,7 @@ model Event {
   userId         Int
   city           City          @relation(fields: [cityId], references: [id])
   cityId         Int
-  Category       Category?     @relation(fields: [categoryId], references: [id])
+  category       Category?     @relation(fields: [categoryId], references: [id])
   categoryId     Int?
 
   @@map("events")
@@ -140,27 +141,27 @@ model Category {
 model City {
   id    Int     @id @default(autoincrement())
   name  String
-  Event Event[]
+  event Event[]
 
   @@map("cities")
 }
 
 model Transaction {
-  id         Int               @id @default(autoincrement())
-  userId     Int
-  user       User              @relation(fields: [userId], references: [id])
-  eventId    Int
-  event      Event             @relation(fields: [eventId], references: [id])
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  user    User  @relation(fields: [userId], references: [id])
+  eventId Int
+  event   Event @relation(fields: [eventId], references: [id])
 
-  voucherId  Int?
-  voucher    Voucher?          @relation(fields: [voucherId], references: [id])
+  voucherId Int?
+  voucher   Voucher? @relation(fields: [voucherId], references: [id])
 
-  couponId   Int?
-  coupon     Coupon?           @relation(fields: [couponId], references: [id])
+  couponId Int?
+  coupon   Coupon? @relation(fields: [couponId], references: [id])
 
-  pointId    Int
-  point      Point             @relation(fields: [pointId], references: [id])
-  
+  pointId Int
+  point   Point @relation(fields: [pointId], references: [id])
+
   totalPrice Int
   qty        Int
   status     TransactionStatus
