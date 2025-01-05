@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { getTransactionsService } from "../services/get-transactions-history.service";
+import { getTransactionsService } from "../services/get-transactions-history.service"; // Sudah diperbaiki
 
 export const getTransactionsController = async (
   req: Request,
@@ -8,7 +8,6 @@ export const getTransactionsController = async (
 ) => {
   try {
     const result = await getTransactionsService({
-
       page: req.body.page,
       size: req.body.size,
     });
@@ -18,6 +17,3 @@ export const getTransactionsController = async (
     next(error);
   }
 };
-
-
-

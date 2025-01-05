@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { createEventController, getEventsController } from "../controllers/event.controller";
+import { createEventController, getEventsByUserController, getEventsController } from "../controllers/event.controller";
 import { uploader } from "../lib/multer";
-import { validateCreateEvent } from "../vaidator/create.validator";
+import { verifyToken } from "../lib/jwt";
 
 const router = Router();
 
@@ -11,5 +11,7 @@ router.post(
   uploader().fields([{ name: "thumbnail", maxCount: 1 }]),
   createEventController
 );
+
+router.get("/byuser", verifyToken,getEventsByUserController);
 
 export default router;
