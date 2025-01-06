@@ -3,6 +3,7 @@ import { getEventsService } from "../services/events/get-events.service";
 import { createEventService } from "../services/events/create-events.service";
 
 import { getEventsByUserService } from "../services/events/get-events-by-user.service";
+import { getEventService } from "../services/events/get-event.service";
 
 export const getEventsController = async (
     req: Request,
@@ -56,6 +57,23 @@ export const getEventsController = async (
       const userId = res.locals.user.id;
   
       const result = await getEventsByUserService(userId);
+  
+      res.status(200).send(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  export const getEventController = async (
+
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = Number(req.params.id);
+  
+      const result = await getEventService(userId);
   
       res.status(200).send(result);
     } catch (error) {
