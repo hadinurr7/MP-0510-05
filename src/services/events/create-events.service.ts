@@ -30,27 +30,27 @@ export const createEventService = async (
 
     const { secure_url } = await cloudinaryUpload(thumbnail);
 
-    const newEvent = await prisma.event.create({
-      data: {
-        ...body,
-        thumbnail: secure_url,
-        price: Number(price),
-        availableSeats: Number(availableSeats),
-        categoryId: Number(categoryId),
-        cityId: Number(cityId),
-        userId: 1,
-      },
-      // select: {
-      //   // Category: true,  // Sesuai dengan nama relasi di schema
-      //   Cities: true,    // Ini sudah benar
-      //   User: true      // Ini sudah benar
-      // }
-    });
+    // const newEvent = await prisma.event.create({
+    //   data: {
+    //     ...body,
+    //     thumbnail: secure_url,
+    //     price: Number(price),
+    //     availableSeats: Number(availableSeats),
+    //     categoryId: Number(categoryId),
+    //     cityId: Number(cityId),
+    //     userId: 1,
+    //   },
+    //   // select: {
+    //   //   // Category: true,  // Sesuai dengan nama relasi di schema
+    //   //   Cities: true,    // Ini sudah benar
+    //   //   User: true      // Ini sudah benar
+    //   // }
+    // });
 
-    console.log(newEvent);
+    // console.log(newEvent);
     
 
-    return newEvent;
+    return 'newEvent';
   } catch (error) {
     console.error("Error creating event:", error);
     throw error;
