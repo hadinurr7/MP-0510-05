@@ -5,6 +5,7 @@ import eventRouter from "./routes/event.router";
 import categoryRouter from "./routes/category.router";
 import cityRouter from "./routes/city.router";
 import userRouter from "./routes/user.router";
+import transactionRouter from "./routes/transaction.router";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use("/users", userRouter)
 app.use("/events", eventRouter);
 app.use("/categories", categoryRouter);
 app.use("/cities", cityRouter);
+app.use("/transaction", transactionRouter);
 
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
