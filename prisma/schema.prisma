@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") //hapus kalau pakai docker
 }
 
 model User {
@@ -174,10 +175,11 @@ model Transaction {
 }
 
 enum TransactionStatus {
-  WAITING
-  VERIFYING
+  PENDING
   SUCCESS
   FAILED
+  CANCELED
+  REFUNDED
 }
 
 model Payment {

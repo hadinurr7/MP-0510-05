@@ -22,7 +22,6 @@ app.use("/vouchers", voucherRouter);
 app.use("/events", eventRouter);
 app.use("/categories", categoryRouter);
 app.use("/cities", cityRouter);
-app.use("/transaction", transactionRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(400).send(err.message);
