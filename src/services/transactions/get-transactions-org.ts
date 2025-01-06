@@ -27,6 +27,7 @@ export const getTransactionsOrganizerService = async (payload: TransactionsPaylo
         },
         user: {  
           select: {
+            fullname:true,
             email: true,
             phoneNumber:true
           },

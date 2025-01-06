@@ -7,7 +7,9 @@ import cityRouter from "./routes/city.router";
 import userRouter from "./routes/user.router";
 import transactionRouter from "./routes/transaction.router";
 import voucherRouter from "./routes/voucher.router"; // Sudah diperbaiki dan disertakan kembali
+import attendeeRouter from "./routes/attendee"
 import dashboardRouter from './routes/dashboard.router'
+
 
 const app = express();
 
@@ -17,6 +19,7 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/transactions", transactionRouter);
+app.use("/attendees",attendeeRouter )
 
 app.use("/vouchers", voucherRouter); 
 

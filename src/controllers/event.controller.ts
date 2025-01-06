@@ -20,6 +20,7 @@ export const getEventsController = async (
         categoryId: parseInt(req.query.categoryId as string) || undefined,
         cityId: parseInt(req.query.cityId as string) || undefined
       };
+      const userId = res.locals.user.id
       const result = await getEventsService(query);
       res.status(200).send(result);
     } catch (error) {
@@ -72,9 +73,7 @@ export const getEventsController = async (
   ) => {
     try {
       const userId = Number(req.params.id);
-  
       const result = await getEventService(userId);
-  
       res.status(200).send(result);
     } catch (error) {
       next(error);
