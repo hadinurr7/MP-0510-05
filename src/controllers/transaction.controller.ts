@@ -1,3 +1,4 @@
+
 import { NextFunction, Request, Response } from "express";
 import { getTransactionsService } from "../services/transactions/get-transactions-history.service";
 import { getTransactionsOrganizerService } from "../services/transactions/get-transactions-org";
@@ -19,6 +20,7 @@ export const getTransactionsController = async (
     next(error);
   }
 };
+
 
 export const getTransactionsOrganizerController = async (
     req: Request,

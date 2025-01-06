@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { getEventsService } from "../services/events/get-events.service";
 import { createEventService } from "../services/events/create-events.service";
+
 import { getEventsByUserService } from "../services/events/get-events-by-user.service";
 
 export const getEventsController = async (
@@ -46,6 +47,7 @@ export const getEventsController = async (
   };
 
   export const getEventsByUserController = async (
+
     req: Request,
     res: Response,
     next: NextFunction
