@@ -6,9 +6,8 @@ interface TransactionsPayload {
   size: number;
 }
 
-export const getTransactionsService = async (payload: TransactionsPayload) => {
+export const getTransactionsOrganizerService = async (payload: TransactionsPayload) => {
   try {
-    
     const page = payload.page > 0 ? payload.page : 1;
     const size = payload.size > 0 ? payload.size : 10;
 
@@ -26,8 +25,14 @@ export const getTransactionsService = async (payload: TransactionsPayload) => {
             description: true,
           },
         },
+        user: {  
+          select: {
+            email: true,
+            phoneNumber:true
+          },
+        },
+        
       },
-      
       take: size,
       skip: (page - 1) * size,
     });

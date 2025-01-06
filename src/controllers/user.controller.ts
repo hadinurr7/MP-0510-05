@@ -15,7 +15,6 @@ export const getUsersController = async (
 ) => {
   try {
     const result = await getUsersService();
-
     res.status(200).send(result);
   } catch (error) {
     next(error);

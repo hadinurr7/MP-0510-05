@@ -12,7 +12,8 @@ import { validateForgotPassword, validateLogin, validateRegister, validateResetP
 const router = Router();
 
 router.post("/register", validateRegister, registerController);
-router.post("/organizer",validateRegister, organizerRegisterController)
+router.post("/register/organizer",validateRegister, organizerRegisterController)
+
 router.post("/login", validateLogin, loginController);
 router.post(
   "/forgot-password",
