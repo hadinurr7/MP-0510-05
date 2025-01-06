@@ -18,7 +18,7 @@ export const createEventService = async (
   thumbnail: Express.Multer.File,
 ) => {
   try {
-    const { name, description, categoryId, startDate, endDate, price, cityId, userId, availableSeats } = body;
+    const { name, categoryId, price, cityId, userId, availableSeats } = body;
 
     const existingEvent = await prisma.event.findFirst({
       where: { name },

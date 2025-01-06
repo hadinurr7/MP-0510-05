@@ -15,7 +15,6 @@ export const getUsersController = async (
 ) => {
   try {
     const result = await getUsersService();
-
     res.status(200).send(result);
   } catch (error) {
     next(error);
@@ -35,6 +34,7 @@ export const getUserController = async (
 
     const decoded = verify (token, JWT_SECRET!) as {id : number}
     // console.log(decoded, "ini decoded");
+    
     const id = Number(req.params.id);
     const result = await getUserService(decoded.id);
     res.status(200).send(result);

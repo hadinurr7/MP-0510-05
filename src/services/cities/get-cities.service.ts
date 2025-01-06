@@ -10,7 +10,7 @@ interface getCityQuery extends PaginationQueryParams {
 export const getCitiesService = async (query: getCityQuery) => {
     try {
         const { page, sortBy, sortOrder, take, search } = query;
-        const whereClause: Prisma.CitiesWhereInput = {};
+        const whereClause: Prisma.CityWhereInput = {};
 
         if (search) {
             whereClause.OR = [
@@ -18,7 +18,7 @@ export const getCitiesService = async (query: getCityQuery) => {
             ];
         }
 
-        const cities = await prisma.cities.findMany({
+        const cities = await prisma.city.findMany({
             where: whereClause,
             skip: (page - 1) * take,
             take: take,
@@ -26,7 +26,7 @@ export const getCitiesService = async (query: getCityQuery) => {
                 [sortBy]: sortOrder,
             },
             include: {
-                events: {
+                event: {
                     select: {
                         id: true,
                         name: true,
@@ -35,7 +35,7 @@ export const getCitiesService = async (query: getCityQuery) => {
             }
         });
 
-        const count = await prisma.cities.count({ where: whereClause });
+        const count = await prisma.city.count({ where: whereClause });
 
         return {
             data: cities,

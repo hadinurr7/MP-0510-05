@@ -1,15 +1,27 @@
-import { Router } from "express";
-import { createEventController, getEventController, getEventsController } from "../controllers/event.controller";
-import { uploader } from "../lib/multer";
-import { createTransactionController } from "../controllers/transaction.controller";
 
-const router = Router();
+import express from "express";
+import {
+  getTransactionsController,
+  getTransactionsOrganizerController,
+  updateTransactionStatusController,
+} from "../controllers/transaction.controller";
+import { verifyToken } from "../lib/jwt";
+import { authorization } from "../lib/auth";
 
-router.get("/:id", getEventController);
-router.post(
-  "/",
-  uploader().fields([{ name: "thumbnail", maxCount: 1 }]),
-  createTransactionController
+const router = express.Router();
+
+router.get("/", verifyToken, getTransactionsController);
+
+router.get(
+  "/organizer",
+  verifyToken,
+  getTransactionsOrganizerController
+);
+
+router.patch(
+  "/update-status/:id",
+  verifyToken,
+  updateTransactionStatusController
 );
 
 export default router;

@@ -147,7 +147,7 @@ interface UpdateProfileBody {
 
 export const updateUserService = async (
   body: UpdateProfileBody,
-  profilePicture: Express.Multer.File | undefined,
+  profilePicture: Express.Multer.File,
   userId: number
 ) => {
   try {
