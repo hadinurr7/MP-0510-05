@@ -7,9 +7,7 @@ export const getDashboardStatisticConstroller = async (
 	next: NextFunction,
 ) => {
 	try {
-		const userId = Number(res.locals.user.id);
 		const result = await getDashboardStatisticService()
-		// const result = await resetPasswordService(userId, req.body.password);
 		res.status(200).send({
 			totalRevenue: result.totalRevenue,
 			totalAttendees: result.totalAttendees,
