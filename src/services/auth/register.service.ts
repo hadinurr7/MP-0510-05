@@ -88,3 +88,4 @@ export const registerService = async (body: RegisterInput) => {
     throw error;
   }
 };
+

@@ -23,7 +23,6 @@ router.patch(
   fileFilter,
   validateUpdateUser,
   updateUserController,
-  
 );
 
 router.patch(

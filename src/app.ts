@@ -16,7 +16,8 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/transactions", transactionRouter);
-app.use("/vouchers", voucherRouter); // Menambahkan router voucher
+
+app.use("/vouchers", voucherRouter); 
 
 app.use("/events", eventRouter);
 app.use("/categories", categoryRouter);

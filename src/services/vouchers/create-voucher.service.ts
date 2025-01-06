@@ -23,8 +23,7 @@ export const createVoucherService = async (body: Voucher, userId: number) => {
       throw new Error("Event not found");
     }
 
-    const eventStartDate = new Date(event.startDate); 
-    const voucherExpiryDate = new Date(eventStartDate);
+    console.log("ini body:",body);
 
     const newData = await prisma.voucher.create({
       data: {
@@ -33,9 +32,10 @@ export const createVoucherService = async (body: Voucher, userId: number) => {
         voucherCode: body.voucherCode,
         qty: body.qty,
         value: body.value,
-        validFrom: new Date(body.validFrom),
-        validUntil: voucherExpiryDate
+        validFrom: new Date(),
+        validUntil: new Date(body.validUntil)
       },
+
     });
 
     return newData;

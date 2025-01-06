@@ -111,6 +111,7 @@ model Event {
   name           String
   thumbnail      String
   description    String        @db.Text
+  content        String
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   isDeleted      Boolean       @default(false)
@@ -147,20 +148,20 @@ model City {
 }
 
 model Transaction {
-  id         Int               @id @default(autoincrement())
-  userId     Int
-  user       User              @relation(fields: [userId], references: [id])
-  eventId    Int
-  event      Event             @relation(fields: [eventId], references: [id])
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  user    User  @relation(fields: [userId], references: [id])
+  eventId Int
+  event   Event @relation(fields: [eventId], references: [id])
 
-  voucherId  Int?
-  voucher    Voucher?          @relation(fields: [voucherId], references: [id])
+  voucherId Int?
+  voucher   Voucher? @relation(fields: [voucherId], references: [id])
 
-  couponId   Int?
-  coupon     Coupon?           @relation(fields: [couponId], references: [id])
+  couponId Int?
+  coupon   Coupon? @relation(fields: [couponId], references: [id])
 
-  pointId    Int
-  point      Point             @relation(fields: [pointId], references: [id])
+  pointId Int
+  point   Point @relation(fields: [pointId], references: [id])
 
   totalPrice Int
   qty        Int
@@ -168,7 +169,7 @@ model Transaction {
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
 
-  payment    Payment[]
+  payment Payment[]
 
   @@map("transactions")
 }
@@ -230,4 +231,3 @@ enum NotificationType {
   PROMOTION
   INFORMATION
 }
-
