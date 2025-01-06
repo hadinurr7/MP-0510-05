@@ -110,7 +110,6 @@ model Event {
   name           String
   thumbnail      String
   description    String        @db.Text
-  content        String
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   isDeleted      Boolean       @default(false)
@@ -124,8 +123,8 @@ model Event {
   userId         Int
   city           City          @relation(fields: [cityId], references: [id])
   cityId         Int
-  category       Category?     @relation(fields: [categoryId], references: [id])
-  categoryId     Int?
+  category       Category     @relation(fields: [categoryId], references: [id])
+  categoryId     Int
 
   @@map("events")
 }

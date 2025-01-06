@@ -5,7 +5,7 @@ export const validateCreateVoucher = [
   body("voucherCode").notEmpty().withMessage("Voucher code is required"),
   body("qty").notEmpty().withMessage("Quantity is required"),
   body("value").notEmpty().withMessage("Value is required"),
-  body("validUntill").notEmpty().withMessage("Expired date is required"),
+  body("validUntil").notEmpty().withMessage("Expired date is required"),
   body("eventId").notEmpty().withMessage("Event id is required"),
 
   (req: Request, res: Response, next: NextFunction) => {
