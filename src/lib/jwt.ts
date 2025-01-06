@@ -8,7 +8,7 @@ export const verifyToken = (
   next: NextFunction
 ) => {
   const token = req.headers.authorization?.split(" ")[1];
-  console.log("ini token",token,req.headers);
+  // console.log("ini token",token,req.headers);
 
   if (!token) {
     res.status(401).send({

@@ -6,7 +6,6 @@ import {
   updateTransactionStatusController,
 } from "../controllers/transaction.controller";
 import { verifyToken } from "../lib/jwt";
-import { authorization } from "../lib/auth";
 
 const router = express.Router();
 
