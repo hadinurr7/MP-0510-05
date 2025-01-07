@@ -4,7 +4,9 @@ import { createEventController, getEventsByUserController, getEventsController, 
 import { uploader } from "../lib/multer";
 import { verifyToken } from "../lib/jwt";
 import { fileFilter } from "../lib/filefilter";
-import { validateUpdateEvent } from "../vaidator/update-event.validator";
+
+import { validateUpdateEvent } from "../vaidator/update-event,validator";
+
 
 const router = Router();
 
@@ -27,5 +29,14 @@ router.put(
 );
 
 router.get("/byuser", verifyToken,getEventsByUserController);
+
+router.put(
+  "/:id",
+  verifyToken,
+  uploader().fields([{ name: "thumbnail", maxCount: 1 }]),
+  fileFilter,
+  validateUpdateEvent,
+  updateEventController
+);
 
 export default router;

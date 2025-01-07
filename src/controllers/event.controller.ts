@@ -81,24 +81,24 @@ export const getEventsController = async (
     }
   };
 
-export const updateEventController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const eventId = parseInt(req.params.id);
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-    
-    const result = await updateEventService(
-      eventId,
-      Number(res.locals.user.id),
-      req.body,
-      files.thumbnail?.[0],
-    );
-    
-    res.status(200).send(result);
-  } catch (error) {
-    next(error);
-  }
-};
+  export const updateEventController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const eventId = Number(req.params.id);
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      
+      const result = await updateEventService(
+        eventId,
+        Number(res.locals.user.id),
+        req.body,
+        files.thumbnail?.[0],
+      );
+      
+      res.status(200).send(result);
+    } catch (error) {
+      next(error);
+    }
+  };
