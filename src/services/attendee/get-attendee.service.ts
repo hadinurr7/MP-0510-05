@@ -1,9 +1,7 @@
-// services/attendee/get-attendees.service.ts
 import { prisma } from "../../lib/prisma";
 
-export const getAttendeesByEventService = async (eventId: number, userId: number) => {
+export const getAttendeesByEventService = async (eventId: number, userId: number, page: number = 1, take: number = 10) => {
   try {
-    // Validasi user dan event
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -12,9 +10,13 @@ export const getAttendeesByEventService = async (eventId: number, userId: number
       throw new Error("User not found");
     }
 
+    // Validasi event dan ambil nama event
     const event = await prisma.event.findUnique({
       where: { id: eventId },
-      select: { userId: true },
+      select: {
+        userId: true,
+        name: true,
+      },
     });
 
     if (!event) {
@@ -25,9 +27,11 @@ export const getAttendeesByEventService = async (eventId: number, userId: number
       throw new Error("Unauthorized access");
     }
 
-    // Mengambil data peserta
+    // Mengambil data peserta dengan pagination
     const attendees = await prisma.transaction.findMany({
       where: { eventId, status: "SUCCESS" },
+      skip: (page - 1) * take,
+      take,
       select: {
         user: {
           select: {
@@ -40,13 +44,23 @@ export const getAttendeesByEventService = async (eventId: number, userId: number
       },
     });
 
-    return attendees.map((attendee) => ({
-      name: attendee.user.fullname,
-      email: attendee.user.email,
-      qty: attendee.qty,
-      totalPrice: attendee.totalPrice,
-    }));
+    // Menghitung total peserta
+    const totalAttendees = await prisma.transaction.count({
+      where: { eventId, status: "SUCCESS" },
+    });
+
+    return {
+      eventName: event.name,
+      totalAttendees,
+      attendees: attendees.map((attendee) => ({
+        name: attendee.user.fullname,
+        email: attendee.user.email,
+        qty: attendee.qty,
+        totalPrice: attendee.totalPrice,
+      })),
+    };
   } catch (error) {
-    throw error
+    console.error(error); // Log error
+    throw new Error("Failed to fetch attendees. Please try again later.");
   }
 };
