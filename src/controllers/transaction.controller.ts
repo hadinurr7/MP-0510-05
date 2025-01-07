@@ -62,33 +62,6 @@ export const getTransactionsOrganizerController = async (
     }
   };
 
-  // export const uploadPaymentProofController = async (
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ) => {
-  //   try {
-  //     const transactionId  = Number(req.params.id)
-  //     const paymentProof = req.file;
-  
-  //     if (!transactionId || !paymentProof) {
-  //       return res.status(400).json({ message: "Transaction ID and payment proof are required." });
-  //     }
-  
-  //     const { updatedTransaction = await uploadPaymentProofService({
-  //       transactionId,
-  //       paymentProof
-  //     });
-  
-  //     res.status(200).json({
-  //       message: "Payment proof uploaded successfully",
-  //       transaction: updatedTransaction,
-  //       payment: \,
-  //     });
-  //   } catch (error) {
-  //     next(error); //
-  //   }
-  // };
 
 
 

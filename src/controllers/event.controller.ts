@@ -4,6 +4,7 @@ import { createEventService } from "../services/events/create-events.service";
 
 import { getEventsByUserService } from "../services/events/get-events-by-user.service";
 import { getEventService } from "../services/events/get-event.service";
+import { updateEventService } from "../services/events/update-event.service";
 
 export const getEventsController = async (
     req: Request,
@@ -55,7 +56,7 @@ export const getEventsController = async (
     next: NextFunction
   ) => {
     try {
-      const userId = res.locals.user.id;
+      const userId = Number(res.locals.user.id);
   
       const result = await getEventsByUserService(userId);
   
@@ -79,3 +80,25 @@ export const getEventsController = async (
       next(error);
     }
   };
+
+export const updateEventController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    
+    const result = await updateEventService(
+      eventId,
+      Number(res.locals.user.id),
+      req.body,
+      files.thumbnail?.[0],
+    );
+    
+    res.status(200).send(result);
+  } catch (error) {
+    next(error);
+  }
+};
