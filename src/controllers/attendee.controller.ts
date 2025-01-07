@@ -43,17 +43,13 @@ export const getAttendeesByEventController = async (
       return;
     }
 
-    // Mendapatkan data peserta dari service
     const attendees = await getAttendeesByEventService(eventId, userId);
 
-    // Mengembalikan data event dan peserta
     res.status(200).send({
       eventName: event.name,
       attendees: attendees,
     });
   } catch (error) {
-    // Menangani error dan meneruskannya ke middleware error handling
-    console.error(error); // Menambahkan logging untuk error
     next(error);
   }
 };
