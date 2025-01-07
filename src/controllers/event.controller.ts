@@ -56,7 +56,7 @@ export const getEventsController = async (
     next: NextFunction
   ) => {
     try {
-      const userId = res.locals.user.id;
+      const userId = Number(res.locals.user.id);
   
       const result = await getEventsByUserService(userId);
   

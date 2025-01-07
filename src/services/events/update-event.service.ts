@@ -1,5 +1,6 @@
 import { cloudinaryUpload } from "../../lib/cloudinary";
 import { prisma } from "../../lib/prisma";
+
 interface UpdateEventBody {
   name?: string;
   description?: string;
@@ -10,6 +11,8 @@ interface UpdateEventBody {
   cityId?: number;
   categoryId?: number;
 }
+
+
 export const updateEventService = async (
     eventId: number,
     userId: number,
