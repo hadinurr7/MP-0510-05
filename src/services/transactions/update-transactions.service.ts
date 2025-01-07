@@ -1,3 +1,4 @@
+import { transporter } from "../../lib/nodemailer";
 import { prisma } from "../../lib/prisma";
 
 export const updateTransactionStatusService = async (
@@ -26,6 +27,18 @@ export const updateTransactionStatusService = async (
         status: status,
       },
     });
+
+	const user = await prisma.user.findFirst({
+		where: {
+			id: updatedTransaction.userId
+		}
+	})
+
+	await transporter.sendMail({
+		  to: user?.email,
+		  subject: status === 'SUCCESS' ? 'Transaksi Sukses' : 'Transaksi Di reject',
+		  html: status === 'SUCCESS' ? 'Anda telah behasil' : 'Anda Telah gagal',
+		});
 
     return { updatedTransaction, name: transaction.user.fullname };
   } catch (error) {
