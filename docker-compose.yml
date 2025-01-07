@@ -3,7 +3,7 @@ version: "3.9"
 services:
   db:
     image: postgres
-    container_name: postgres_container_minpro
+    container_name: postgres_container_abcd
     restart: always
     environment: 
       - POSTGRES_PASSWORD=admin
