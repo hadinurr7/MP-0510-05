@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { getTransactionsService } from "../services/transactions/get-transactions-history.service";
 import { getTransactionsOrganizerService } from "../services/transactions/get-transactions-org";
 import { updateTransactionStatusService } from "../services/transactions/update-transactions.service";
+import { uploadPaymentProofService } from "../services/transactions/upload-paymentProof";
 
 export const getTransactionsController = async (
   req: Request,
@@ -60,5 +61,34 @@ export const getTransactionsOrganizerController = async (
       next(error);
     }
   };
+
+  // export const uploadPaymentProofController = async (
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   try {
+  //     const transactionId  = Number(req.params.id)
+  //     const paymentProof = req.file;
+  
+  //     if (!transactionId || !paymentProof) {
+  //       return res.status(400).json({ message: "Transaction ID and payment proof are required." });
+  //     }
+  
+  //     const { updatedTransaction = await uploadPaymentProofService({
+  //       transactionId,
+  //       paymentProof
+  //     });
+  
+  //     res.status(200).json({
+  //       message: "Payment proof uploaded successfully",
+  //       transaction: updatedTransaction,
+  //       payment: \,
+  //     });
+  //   } catch (error) {
+  //     next(error); //
+  //   }
+  // };
+
 
 

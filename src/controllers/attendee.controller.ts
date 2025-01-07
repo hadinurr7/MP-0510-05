@@ -1,4 +1,3 @@
-// controllers/attendees/getAttendeesByEvent.controller.ts
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { getAttendeesByEventService } from "../services/attendee/get-attendee.service";
@@ -10,15 +9,16 @@ export const getAttendeesByEventController = async (
 ): Promise<void> => {
   try {
     const eventId = Number(req.params.eventId);
-    const userId = Number(req.params.id);
+    const userId = Number(res.locals.user.id);
+    
+    console.log( "ini eventId:", eventId);
+    console.log("ini userId :", userId);
 
-    // Validasi ID event dan ID pengguna
     if (isNaN(eventId) || isNaN(userId)) {
-      res.status(400).json({ error: "Invalid event ID or user ID" });
+      res.status(400).send({ error: "Invalid event ID or user ID" });
       return;
     }
 
-    // Cek apakah pengguna ada
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -28,22 +28,32 @@ export const getAttendeesByEventController = async (
       return;
     }
 
-    // Cek apakah event yang diminta sesuai dengan user
     const event = await prisma.event.findUnique({
       where: { id: eventId },
-      select: { userId: true },
+      select: { userId: true, name: true },
     });
 
-    if (!event || event.userId !== userId) {
-      res.status(403).json({ error: "Unauthorized access" });
+    if (!event) {
+      res.status(404).send({ error: "Event not found" });
       return;
     }
 
-    // Panggil service untuk mengambil data peserta
+    if (event.userId !== userId) {
+      res.status(403).send({ error: "Unauthorized access" });
+      return;
+    }
+
+    // Mendapatkan data peserta dari service
     const attendees = await getAttendeesByEventService(eventId, userId);
 
-    res.status(200).json(attendees);
+    // Mengembalikan data event dan peserta
+    res.status(200).send({
+      eventName: event.name,
+      attendees: attendees,
+    });
   } catch (error) {
+    // Menangani error dan meneruskannya ke middleware error handling
+    console.error(error); // Menambahkan logging untuk error
     next(error);
   }
 };
