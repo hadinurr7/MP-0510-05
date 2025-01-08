@@ -1,6 +1,7 @@
 // services/transaction/verify-payment.service.ts
-import { prisma } from "../../lib/prisma";
 import { TransactionStatus, PaymentStatus } from "@prisma/client";
+import prisma from "../../lib/prisma";
+
 
 export const verifyPaymentService = async (
   transactionId: number,

@@ -1,5 +1,6 @@
 import { transporter } from "../../lib/nodemailer";
-import { prisma } from "../../lib/prisma";
+import prisma from "../../lib/prisma";
+
 
 export const updateTransactionStatusService = async (
   transactionId: number,

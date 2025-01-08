@@ -5,12 +5,10 @@ import {
     getTransactionsOrganizerController,
     updateTransactionStatusController,
     verifyPaymentController,
-
 } from "../controllers/transaction.controller";
 import { fileFilter } from "../lib/filefilter";
 import { verifyToken } from "../lib/jwt";
 
-import { fileFilter } from "../lib/filefilter";
 import { uploader } from "../lib/multer";
 
 const router = express.Router();

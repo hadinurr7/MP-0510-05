@@ -1,5 +1,6 @@
-import { prisma } from '../../lib/prisma';
 import { TransactionStatus, PaymentStatus } from '@prisma/client';
+import prisma from '../../lib/prisma';
+
 
 export const getDashboardStatisticService = async () => {
   try {
