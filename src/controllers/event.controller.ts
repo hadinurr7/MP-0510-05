@@ -12,7 +12,7 @@ export const getEventsController = async (
 ) => {
   try {
     const query = {
-      take: parseInt(req.query.take as string) || 3,
+      take: parseInt(req.query.take as string) || 4,
       page: parseInt(req.query.page as string) || 1,
       sortBy: (req.query.sortBy as string) || "createdAt",
       sortOrder: (req.query.sortBy as string) || "desc",
@@ -20,7 +20,7 @@ export const getEventsController = async (
       categoryId: parseInt(req.query.categoryId as string) || undefined,
       cityId: parseInt(req.query.cityId as string) || undefined,
     };
-    const userId = res.locals.user.id;
+
     const result = await getEventsService(query);
     res.status(200).send(result);
   } catch (error) {
