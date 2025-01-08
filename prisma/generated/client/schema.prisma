@@ -1,0 +1,234 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  email          String   @unique
+  fullname       String
+  password       String
+  phoneNumber    String?
+  profilePicture String?
+  address        String?
+  role           Role     @default(USER)
+  referralCode   String?  @unique
+  totalPoints    Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  isDeleted      Boolean  @default(false)
+
+  referrer     Referral[]     @relation("UserReferrer")
+  referredBy   Referral[]     @relation("UserRefferedBy")
+  transaction  Transaction[]
+  voucher      Voucher[]
+  coupon       Coupon[]
+  point        Point[]
+  event        Event[]
+  notification Notification[]
+  review       Review[]
+
+  @@map("users")
+}
+
+enum Role {
+  ORGANIZER
+  USER
+}
+
+model Referral {
+  id           Int      @id @default(autoincrement())
+  referrerId   Int
+  referredById Int
+  referrer     User     @relation("UserReferrer", fields: [referrerId], references: [id])
+  referredBy   User     @relation("UserRefferedBy", fields: [referredById], references: [id])
+  createdAt    DateTime @default(now())
+
+  @@map("referrals")
+}
+
+model Voucher {
+  id          Int           @id @default(autoincrement())
+  voucherCode String        @unique
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+  eventId     Int
+  event       Event         @relation(fields: [eventId], references: [id])
+  isUsed      Boolean       @default(false)
+  qty         Int
+  value       Int
+  validFrom   DateTime
+  validUntil  DateTime
+  createdAt   DateTime      @default(now())
+  transaction Transaction[]
+
+  @@map("vouchers")
+}
+
+model Coupon {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  code       String   @unique
+  isUsed     Boolean  @default(false)
+  value      Int
+  validFrom  DateTime
+  validUntil DateTime
+  createdAt  DateTime @default(now())
+
+  transaction Transaction[]
+
+  @@map("coupons")
+}
+
+model Point {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  pointEarned Int
+  validFrom   DateTime
+  validUntil  DateTime
+  createdAt   DateTime @default(now())
+
+  transaction Transaction[]
+
+  @@map("points")
+}
+
+model Event {
+  id             Int           @id @default(autoincrement())
+  name           String
+  thumbnail      String
+  description    String        @db.Text
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  isDeleted      Boolean       @default(false)
+  startDate      DateTime
+  endDate        DateTime
+  price          Int
+  availableSeats Int
+  transaction    Transaction[]
+  voucher        Voucher[]
+  User           User          @relation(fields: [userId], references: [id])
+  userId         Int
+  city           City          @relation(fields: [cityId], references: [id])
+  cityId         Int
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  @@map("events")
+}
+
+model Category {
+  id     Int     @id @default(autoincrement())
+  name   String
+  events Event[]
+
+  @@map("categories")
+}
+
+model City {
+  id    Int     @id @default(autoincrement())
+  name  String
+  event Event[]
+
+  @@map("cities")
+}
+
+model Transaction {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  user    User  @relation(fields: [userId], references: [id])
+  eventId Int
+  event   Event @relation(fields: [eventId], references: [id])
+
+  voucherId Int?
+  voucher   Voucher? @relation(fields: [voucherId], references: [id])
+
+  couponId Int?
+  coupon   Coupon? @relation(fields: [couponId], references: [id])
+
+  pointId Int
+  point   Point @relation(fields: [pointId], references: [id])
+
+  totalPrice Int
+  qty        Int
+  status     TransactionStatus
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  payment Payment[]
+
+  @@map("transactions")
+}
+
+enum TransactionStatus {
+  WAITING
+  VERIFYING
+  SUCCESS
+  FAILED
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  transactionId Int
+  transaction   Transaction   @relation(fields: [transactionId], references: [id])
+  paymentMethod String
+  paymentStatus PaymentStatus
+  amount        Int
+  paymentProof  String
+  createdAt     DateTime      @default(now())
+  validUntil    DateTime      @default(dbgenerated("NOW() + interval '2 hours'"))
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELED
+  REFUNDED
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("reviews")
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  message   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  TRANSACTION
+  PROMOTION
+  INFORMATION
+}

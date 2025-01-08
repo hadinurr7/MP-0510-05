@@ -1,7 +1,7 @@
 // services/categories.service.ts
 import { Prisma } from "@prisma/client";
 import { PaginationQueryParams } from "../../types/pagination";
-import { prisma } from "../../lib/prisma";
+import prisma from "../../lib/prisma";
 
 interface getCategoriesQuery extends PaginationQueryParams {
     search?: string
