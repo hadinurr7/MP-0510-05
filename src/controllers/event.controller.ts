@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { getEventsService } from "../services/events/get-events.service";
 import { createEventService } from "../services/events/create-events.service";
-
 import { getEventsByUserService } from "../services/events/get-events-by-user.service";
 import { getEventService } from "../services/events/get-event.service";
 
@@ -22,6 +21,7 @@ export const getEventsController = async (
       categoryId: parseInt(req.query.categoryId as string) || undefined,
       cityId: parseInt(req.query.cityId as string) || undefined,
     };
+
     const result = await getEventsService(query);
     res.status(200).send(result);
   } catch (error) {
@@ -75,25 +75,26 @@ export const getEventController = async (
   } catch (error) {
     next(error);
   }
-}
-  export const updateEventController = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const eventId = Number(req.params.id);
-      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+};
 
-      const result = await updateEventService(
-        eventId,
-        Number(res.locals.user.id),
-        req.body,
-        files.thumbnail?.[0]
-      );
+export const updateEventController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const eventId = Number(req.params.id);
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-      res.status(200).send(result);
-    } catch (error) {
-      next(error);
-    }
-  };
+    const result = await updateEventService(
+      eventId,
+      Number(res.locals.user.id),
+      req.body,
+      files.thumbnail?.[0]
+    );
+
+    res.status(200).send(result);
+  } catch (error) {
+    next(error);
+  }
+};

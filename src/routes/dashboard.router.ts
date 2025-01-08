@@ -6,9 +6,9 @@ import { getDashboardStatisticConstroller } from '../controllers/dashboard.contr
 const router = Router();
 
 router.get(
-	'/statistics',
-	verifyToken,
-	getDashboardStatisticConstroller,
+    '/statistics',
+    verifyToken,
+    getDashboardStatisticConstroller,
 );
 
 
