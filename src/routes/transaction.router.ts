@@ -5,9 +5,12 @@ import {
     getTransactionsOrganizerController,
     updateTransactionStatusController,
     verifyPaymentController,
+
 } from "../controllers/transaction.controller";
 import { fileFilter } from "../lib/filefilter";
 import { verifyToken } from "../lib/jwt";
+
+import { fileFilter } from "../lib/filefilter";
 import { uploader } from "../lib/multer";
 
 const router = express.Router();
@@ -32,5 +35,6 @@ router.patch(
 router.post("/", createTransactionController);
 
 router.post("/:transactionId/verify", verifyPaymentController);
+
 
 export default router;
