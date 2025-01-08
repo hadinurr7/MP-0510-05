@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 
 export const updateTransactionStatusService = async (
   transactionId: number,
+
   status: "SUCCESS" | "FAILED" | "WAITING" | "FAILED"
 ) => {
   try {

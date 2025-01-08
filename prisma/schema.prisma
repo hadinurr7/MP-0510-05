@@ -10,9 +10,11 @@ generator client {
 }
 
 datasource db {
+
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL") //hapus kalau pakai docker
+  directUrl = env("DIRECT_URL") 
+
 }
 
 model User {
@@ -125,6 +127,7 @@ model Event {
   userId         Int
   city           City          @relation(fields: [cityId], references: [id])
   cityId         Int
+
   category       Category     @relation(fields: [categoryId], references: [id])
   categoryId     Int
 
@@ -190,6 +193,7 @@ model Payment {
   amount        Int
   paymentProof  String
   createdAt     DateTime      @default(now())
+  validUntil    DateTime      @default(dbgenerated("NOW() + interval '2 hours'"))
 
   @@map("payments")
 }
