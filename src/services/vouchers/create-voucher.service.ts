@@ -3,18 +3,6 @@ import { prisma } from "../../lib/prisma";
 
 export const createVoucherService = async (body: Voucher, userId: number) => {
   try {
-    // Memeriksa apakah kode voucher sudah ada
-    const existingVoucher = await prisma.voucher.findFirst({
-      where: {
-        voucherCode: body.voucherCode,
-      },
-    });
-
-    if (existingVoucher) {
-      throw new Error("Voucher Code is Already exist");
-    }
-
-    // Mengambil tanggal mulai event
     const event = await prisma.event.findUnique({
       where: { id: body.eventId },  // Pastikan eventId ada di body
     });
@@ -23,7 +11,7 @@ export const createVoucherService = async (body: Voucher, userId: number) => {
       throw new Error("Event not found");
     }
 
-    console.log("ini body:",body);
+    // console.log("ini body:",body);
 
     const newData = await prisma.voucher.create({
       data: {

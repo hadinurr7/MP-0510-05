@@ -7,11 +7,11 @@ export const authorization = (
 ) => {
   const user = res.locals.user;
 
-  if (user && user.role == "ORGANIZER") {
+  if (user && user.role === "ORGANIZER") {
     return next();
   }
 
-  res.status(403).json({
+  res.status(403).send({
     status: "error",
     message: "You are not allowed to perform this action.",
   });

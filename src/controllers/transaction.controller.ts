@@ -45,21 +45,26 @@ export const getTransactionsOrganizerController = async (
     next: NextFunction
   ) => {
     try {
-      const transactionId = Number(req.params.id);
-  
+      const transactionId = Number(req.params.id);  
       const { status } = req.body;
       if (!status) {
         throw new Error("Status is required");
       }
-  
       const updatedTransaction = await updateTransactionStatusService(
         transactionId,
         status
       );
   
-      res.status(200).json(updatedTransaction);
+      res.status(200).send(updatedTransaction);
     } catch (error) {
       next(error);
     }
   };
+
+
+ 
+
+
+
+
 

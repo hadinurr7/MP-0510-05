@@ -6,7 +6,9 @@ interface TransactionsPayload {
   size: number;
 }
 
-export const getTransactionsOrganizerService = async (payload: TransactionsPayload) => {
+export const getTransactionsOrganizerService = async (
+  payload: TransactionsPayload
+) => {
   try {
     const page = payload.page > 0 ? payload.page : 1;
     const size = payload.size > 0 ? payload.size : 10;
@@ -25,17 +27,27 @@ export const getTransactionsOrganizerService = async (payload: TransactionsPaylo
             description: true,
           },
         },
-        user: {  
+        payment: {
           select: {
-            email: true,
-            phoneNumber:true
+            id: true,
+            paymentStatus: true,
+            paymentMethod: true,
+            paymentProof: true,
           },
         },
-        
+        user: {
+          select: {
+            fullname: true,
+            email: true,
+            phoneNumber: true,
+          },
+        },
       },
       take: size,
       skip: (page - 1) * size,
     });
+
+    console.log("transactions:", transaction);
     
     return transaction;
   } catch (error) {
