@@ -8,7 +8,7 @@ export const getCategoriesController = async (
 ) => {
     try {
         const query = {
-            take: parseInt(req.query.take as string) || 3,
+            take: parseInt(req.query.take as string) || 6,
             page: parseInt(req.query.page as string) || 1,
             sortBy: (req.query.sortBy as string) || "id",
             sortOrder: (req.query.sortBy as string) || "desc",
