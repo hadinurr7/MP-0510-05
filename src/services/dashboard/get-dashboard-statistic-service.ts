@@ -1,56 +1,117 @@
 import { prisma } from '../../lib/prisma';
+import { TransactionStatus, PaymentStatus } from '@prisma/client';
 
 export const getDashboardStatisticService = async () => {
-	try {
-		const events = await prisma.event.findMany({
-			select: {
-				id: true,
-			},
-			distinct: ['id'],
-		});
+  try {
+    const currentDate = new Date();
 
-		const statistics = await prisma.transaction.aggregate({
-			_sum: {
-				totalPrice: true,
-				qty: true,
-			},
-		});
+    const [activeEvents, completedEvents] = await Promise.all([
+      prisma.event.count({
+        where: {
+          endDate: {
+            gt: currentDate,
+          },
+          isDeleted: false,
+        },
+      }),
+      prisma.event.count({
+        where: {
+          endDate: {
+            lte: currentDate,
+          },
+          isDeleted: false,
+        },
+      }),
+    ]);
 
-		const transactions = await prisma.transaction.groupBy({
-			by: ['createdAt'],
-			_count: {
-			  _all: true,
-			},
-			orderBy: {
-			  createdAt: 'asc',
-			},
-		  });
-		
-		  // Group data by year-month
-		  const groupedData = transactions.reduce<Record<string, number>>((acc, { createdAt, _count }) => {
-			const date = new Date(createdAt);
-			const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-		
-			if (!acc[yearMonth]) {
-			  acc[yearMonth] = 0;
-			}
-		
-			acc[yearMonth] += _count._all;
-		
-			return acc;
-		  }, {});
-	
+    const transactionStats = await prisma.transaction.aggregate({
+      _sum: {
+        totalPrice: true,
+        qty: true,
+      },
+      where: {
+        status: TransactionStatus.SUCCESS,
+      },
+    });
 
-		return {
-			totalRevenue: statistics._sum.totalPrice,
-			totalAttendees: statistics._sum.qty,
-			totalEvent: events.length || 0,
-			chart: Object.entries(groupedData).map(([month, count]) => ({
-				month,
-				count,
-			  }))
-		};
-	} catch (error) {
-		throw error;
-	}
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const transactions = await prisma.transaction.groupBy({
+      by: ['createdAt', 'status'],
+      _count: {
+        _all: true,
+      },
+      where: {
+        createdAt: {
+          gte: sixMonthsAgo,
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    const paymentStats = await prisma.payment.groupBy({
+      by: ['paymentStatus'],
+      _count: {
+        _all: true,
+      },
+    });
+
+    const monthlyData = transactions.reduce<Record<string, { successCount: number; failedCount: number }>>(
+      (acc, { createdAt, status, _count }) => {
+        const date = new Date(createdAt);
+        const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+        if (!acc[yearMonth]) {
+          acc[yearMonth] = { successCount: 0, failedCount: 0 };
+        }
+
+        if (status === TransactionStatus.SUCCESS) {
+          acc[yearMonth].successCount += _count._all;
+        } else if (status === TransactionStatus.FAILED) {
+          acc[yearMonth].failedCount += _count._all;
+        }
+
+        return acc;
+      },
+      {}
+    );
+
+    const processedPaymentStats = {
+      pending: 0,
+      success: 0,
+      failed: 0,
+    };
+
+    paymentStats.forEach(({ paymentStatus, _count }) => {
+      switch (paymentStatus) {
+        case PaymentStatus.PENDING:
+          processedPaymentStats.pending = _count._all;
+          break;
+        case PaymentStatus.SUCCESS:
+          processedPaymentStats.success = _count._all;
+          break;
+        case PaymentStatus.FAILED:
+          processedPaymentStats.failed = _count._all;
+          break;
+      }
+    });
+
+    return {
+      totalRevenue: transactionStats._sum.totalPrice || 0,
+      totalAttendees: transactionStats._sum.qty || 0,
+      totalEvents: activeEvents + completedEvents,
+      activeEvents,
+      completedEvents,
+      recentTransactions: Object.entries(monthlyData).map(([month, counts]) => ({
+        month,
+        ...counts,
+      })),
+      paymentStats: processedPaymentStats,
+    };
+  } catch (error) {
+    throw error;
+  }
 };

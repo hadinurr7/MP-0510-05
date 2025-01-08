@@ -3,6 +3,7 @@ import { getEventsService } from "../services/events/get-events.service";
 import { createEventService } from "../services/events/create-events.service";
 import { getEventsByUserService } from "../services/events/get-events-by-user.service";
 import { getEventService } from "../services/events/get-event.service";
+
 import { updateEventService } from "../services/events/update-event.service";
 
 export const getEventsController = async (
@@ -54,6 +55,7 @@ export const getEventsByUserController = async (
     const userId = Number(res.locals.user.id);
 
     const result = await getEventsByUserService(userId);
+
     res.status(200).send(result);
   } catch (error) {
     next(error);
