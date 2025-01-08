@@ -75,13 +75,3 @@ export const getTransactionsOrganizerController = async (
 
  
 
-
-
-
-
- 
-
-
-
-
-
